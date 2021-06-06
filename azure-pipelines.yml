@@ -16,7 +16,10 @@ steps:
     displayName: "Install Node"
 
   - script: npm install
-    displayName: 'Install Dependencies'
+    displayName: "Install Dependencies"
 
   - script: npx ng build --prod
-    displayName: 'Build'
+    displayName: "Build"
+
+  - script: npx ng test --watch=false
+    displayName: "Tests"
