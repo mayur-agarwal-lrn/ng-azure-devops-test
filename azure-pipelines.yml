@@ -15,14 +15,33 @@ steps:
       versionSpec: "14.x"
     displayName: "Install Node"
 
-  - script: npm install
-    displayName: "Install Dependencies"
+  - task: Cache@2
+    displayName: "Cache npm Dependencies"
+    inputs:
+      key: "**/package-lock.json, !**/node_modules/**/package-lock.json, !**/.*/**/package-lock.json"
+      path: "$(Build.SourcesDirectory)/node_modules"
+      cacheHitVar: CacheRestored
 
-  - script: npx ng build --prod
-    displayName: "Build"
+  - task: Npm@1
+    displayName: "npm ci"
+    inputs:
+      command: ci
+      verbose: false
+    condition: eq(variables['CacheRestored'],False)
 
-  - script: npx ng test --watch=false --codeCoverage=true
-    displayName: "Tests"
+  - task: Npm@1
+    displayName: "ng build"
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: "run build"
+
+  - task: Npm@1
+    displayName: "ng test"
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: "run test"
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

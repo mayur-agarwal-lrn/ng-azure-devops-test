@@ -2,27 +2,36 @@ import { Injectable } from '@angular/core';
 import { NgbDatepickerI18n, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { LanguageService } from './language-service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CustomDatepickerI18n extends NgbDatepickerI18n {
-  I18N_VALUES!: { [key: string]: any };
+  CALENDAR_VALUES!: { [key: string]: any };
 
   constructor(languageService: LanguageService) {
     super();
     languageService
       .get('calender')
       .subscribe((calender: { [key: string]: any }) => {
-        this.I18N_VALUES = calender;
+        this.CALENDAR_VALUES = calender;
       });
   }
 
   getWeekdayShortName(weekday: number): string {
-    return this.I18N_VALUES.weekdays[weekday - 1];
+    if (this.CALENDAR_VALUES.weekdays)
+      return this.CALENDAR_VALUES.weekdays[weekday - 1];
+
+    return 'a';
   }
   getWeekLabel(): string {
-    return this.I18N_VALUES.weekLabel;
+    if (this.CALENDAR_VALUES.weekLabel) return this.CALENDAR_VALUES.weekLabel;
+    return 'a';
   }
   getMonthShortName(month: number): string {
-    return this.I18N_VALUES.months[month - 1];
+    if (this.CALENDAR_VALUES.months)
+      return this.CALENDAR_VALUES.months[month - 1];
+
+    return 'a';
   }
   getMonthFullName(month: number): string {
     return this.getMonthShortName(month);
